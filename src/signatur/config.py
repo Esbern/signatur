@@ -37,6 +37,15 @@ class ProcessingCfg:
 
 
 @dataclass(frozen=True)
+class FuzzyCfg:
+    min_cells_for_envelope: int = 150
+    covariance: str = "ledoit_wolf"
+    per_class_rasters: bool = True
+    compression: str = "DEFLATE"
+    batch_px: int = 300000
+
+
+@dataclass(frozen=True)
 class Config:
     crs: str
     pc_raster_dir: Path
@@ -51,6 +60,7 @@ class Config:
     lookup_seed: Path
     analysis: AnalysisCfg
     processing: ProcessingCfg
+    fuzzy: FuzzyCfg
     source_path: Path = field(default=REPO_ROOT / "config.yaml")
 
     # -- derived helpers ---------------------------------------------------
@@ -106,6 +116,14 @@ class Config:
     def dir_stats(self) -> Path:
         return self.out("04_stats")
 
+    @property
+    def dir_model(self) -> Path:
+        return self.out("05_model")
+
+    @property
+    def dir_fuzzy(self) -> Path:
+        return self.out("06_fuzzy")
+
 
 def _resolve(base: Path, value: str | Path) -> Path:
     p = Path(value).expanduser()
@@ -122,6 +140,7 @@ def load_config(path: str | Path | None = None) -> Config:
     paths = raw["paths"]
     analysis = raw.get("analysis", {})
     processing = raw.get("processing", {})
+    fuzzy = raw.get("fuzzy", {})
 
     test_bbox = processing.get("test_bbox")
     if test_bbox is not None:
@@ -143,6 +162,7 @@ def load_config(path: str | Path | None = None) -> Config:
         lookup_seed=_resolve(REPO_ROOT, raw["lookup_seed"]),
         analysis=AnalysisCfg(**analysis),
         processing=ProcessingCfg(block_size=int(processing.get("block_size", 2048)), test_bbox=test_bbox),
+        fuzzy=FuzzyCfg(**fuzzy),
         source_path=cfg_path,
     )
     return cfg

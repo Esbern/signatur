@@ -27,6 +27,19 @@ Input habitat data: 3 overlapping GeoParquet layers, each with a numeric-ish
 `03_plots/class_mean_heatmap.png` and `04_stats/summary.md` are the headline
 answer to "are the conditions significantly different?".
 
+### Phase 2: the fuzzy suitability maps
+
+| step | module | output (`<output_dir>/…`) |
+|------|--------|---------------------------|
+| `model` | `model.py` | `05_model/` — one multivariate-Gaussian envelope per habitat type (mean + shrunk covariance) in standardised 8-PC space, plus `scaler.json` and `model_report.csv` (per-class Gaussian-fit calibration) |
+| `project` | `project.py` | `06_fuzzy/` — streams all of Denmark: `best_class.tif` (closest habitat), `best_suitability.tif`, `best_distance.tif` (Mahalanobis), and one `NN_<code>_suitability.tif` (0–1) per habitat type |
+
+Suitability = chi-square survival function of the Mahalanobis distance to the
+envelope: **1** at the centre of the occupied niche, **~0.5** at a typical
+occupied cell, **~0** far outside. Run with `python -m signatur fuzzy`
+(= `model` then `project`); `project` is the long step (streams the 8 rasters
+over the whole grid).
+
 ## Setup
 
 ```bash
@@ -57,9 +70,10 @@ Each step skips itself if its output already exists; use `--force` to rebuild.
 `hovednaturtype` (used for plot grouping/colour) and a `prioriteret` flag. It is
 plain CSV — correct or extend it and re-run `python -m signatur lookup --force`.
 
-## Later phases (not in this scaffold)
+## Later / optional
 
-- Fuzzy distance-to-envelope map for all of Denmark (block-wise projection over
-  the full PC grid, à la `Groen_trepart/src/project_cluster_distances.py`).
-- Optional per-habitat isocluster signatures.
-- Adding a climate / atmosphere sphere.
+- Mask the fuzzy maps to non-habitat land only (candidate new-nature areas).
+- Replace the single Gaussian with a mixture for the few non-Gaussian niches
+  flagged in `model_report.csv`.
+- Adding a climate / atmosphere sphere (weak nationally per the Phase 1 stats,
+  but a large-scale temperature/precipitation gradient is a new axis).

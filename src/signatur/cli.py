@@ -12,7 +12,9 @@ import time
 
 from .config import check_inputs, load_config
 
-STEPS = ["lookup", "rasterize", "extract", "plots", "stats"]
+EDA_STEPS = ["lookup", "rasterize", "extract", "plots", "stats"]
+FUZZY_STEPS = ["model", "project"]
+STEPS = EDA_STEPS + FUZZY_STEPS
 
 
 def _run_step(step: str, cfg, force: bool) -> None:
@@ -33,6 +35,12 @@ def _run_step(step: str, cfg, force: bool) -> None:
     elif step == "stats":
         from .stats import make_stats
         make_stats(cfg, force=force)
+    elif step == "model":
+        from .model import build_envelopes
+        build_envelopes(cfg, force=force)
+    elif step == "project":
+        from .project import project_fuzzy
+        project_fuzzy(cfg, force=force)
     else:  # pragma: no cover
         raise ValueError(step)
     print(f"--- {step} done in {time.time() - t0:.1f}s")
@@ -41,7 +49,8 @@ def _run_step(step: str, cfg, force: bool) -> None:
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(prog="signatur", description=__doc__,
                                      formatter_class=argparse.RawDescriptionHelpFormatter)
-    parser.add_argument("step", choices=STEPS + ["all"], help="pipeline step to run")
+    parser.add_argument("step", choices=STEPS + ["all", "fuzzy"],
+                        help="a single step, 'all' (the 5 EDA steps), or 'fuzzy' (model + project)")
     parser.add_argument("--config", default=None, help="path to config.yaml (default: repo root)")
     parser.add_argument("--force", action="store_true", help="rebuild even if outputs exist")
     args = parser.parse_args(argv)
@@ -53,7 +62,7 @@ def main(argv: list[str] | None = None) -> int:
     if cfg.processing.test_bbox:
         print(f"TEST BBOX  : {cfg.processing.test_bbox}  (subset run)")
 
-    steps = STEPS if args.step == "all" else [args.step]
+    steps = {"all": EDA_STEPS, "fuzzy": FUZZY_STEPS}.get(args.step, [args.step])
     for step in steps:
         _run_step(step, cfg, args.force)
     return 0
