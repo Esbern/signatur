@@ -17,11 +17,12 @@ from scipy.cluster.hierarchy import leaves_list, linkage
 
 from .analysis import Prepared, class_label, prepare
 from .config import Config
+from .ioretry import save_fig
 
 
 def _save(fig, cfg: Config, name: str) -> None:
     for ext in ("png", "svg"):
-        fig.savefig(cfg.dir_plots / f"{name}.{ext}", dpi=150, bbox_inches="tight")
+        save_fig(fig, cfg.dir_plots / f"{name}.{ext}", dpi=150, bbox_inches="tight")
     plt.close(fig)
     print(f"[plots] {name}")
 

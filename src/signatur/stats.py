@@ -25,6 +25,7 @@ from sklearn.model_selection import StratifiedKFold, cross_val_predict, train_te
 
 from .analysis import Prepared, class_label, prepare
 from .config import Config
+from .ioretry import save_fig, to_csv, write_text
 
 MAX_TRAIN = 120_000
 
@@ -117,7 +118,7 @@ def _plot_cm(res, prep: Prepared, cfg: Config) -> None:
                  f"(chance {res['chance']:.2f})")
     fig.colorbar(im, ax=ax, shrink=0.6)
     for ext in ("png", "svg"):
-        fig.savefig(cfg.dir_stats / f"confusion_matrix.{ext}", dpi=150, bbox_inches="tight")
+        save_fig(fig, cfg.dir_stats / f"confusion_matrix.{ext}", dpi=150, bbox_inches="tight")
     plt.close(fig)
 
 
@@ -184,11 +185,11 @@ def make_stats(cfg: Config, force: bool = False) -> None:
         raise RuntimeError("need >= 2 classes above min_pixels_per_class for statistics")
 
     tests = _per_pc_tests(prep)
-    tests.to_csv(cfg.dir_stats / "per_pc_tests.csv", index=False)
+    to_csv(tests, cfg.dir_stats / "per_pc_tests.csv", index=False)
     print("[stats] per-PC tests done")
 
     res = _classifier(prep, cfg)
-    res["importance"].to_csv(cfg.dir_stats / "pc_importance.csv", index=False)
+    to_csv(res["importance"], cfg.dir_stats / "pc_importance.csv", index=False)
     _plot_cm(res, prep, cfg)
 
     report = [
@@ -200,8 +201,8 @@ def make_stats(cfg: Config, force: bool = False) -> None:
         "permutation importance (balanced-accuracy drop):",
         res["importance"].to_string(index=False),
     ]
-    (cfg.dir_stats / "classifier_report.txt").write_text("\n".join(report))
+    write_text(cfg.dir_stats / "classifier_report.txt", "\n".join(report))
 
-    out.write_text(_summary_md(tests, res, prep, cfg))
+    write_text(out, _summary_md(tests, res, prep, cfg))
     print(f"[stats] balanced accuracy {res['bal_acc']:.2f} "
           f"({res['bal_acc'] / res['chance']:.1f}x chance) -> {out}")

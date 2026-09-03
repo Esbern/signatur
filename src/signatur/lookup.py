@@ -14,6 +14,7 @@ import pandas as pd
 import pyarrow.parquet as pq
 
 from .config import Config
+from .ioretry import to_csv
 
 
 def _read_codes(path: Path, field: str) -> pd.Series:
@@ -69,7 +70,7 @@ def build_lookup(cfg: Config, force: bool = False) -> pd.DataFrame:
     if missing:
         print(f"[lookup] WARNING: no seed entry for codes {missing} - add them to {cfg.lookup_seed.name}")
 
-    lut.to_csv(out_path, index=False)
+    to_csv(lut, out_path, index=False)
     print(f"[lookup] wrote {len(lut)} classes -> {out_path}")
     return lut
 

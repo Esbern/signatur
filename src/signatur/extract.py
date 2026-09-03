@@ -22,6 +22,7 @@ from rasterio.transform import xy as transform_xy
 
 from .config import Config
 from .grid import load_grid, check_same_grid, iter_block_windows
+from .ioretry import savez, to_csv, to_parquet, write_text
 from .lookup import load_lookup
 
 
@@ -110,8 +111,8 @@ def build_training_store(cfg: Config, force: bool = False) -> None:
     for i, name in enumerate(feats):
         df[name] = X[:, i]
 
-    df.to_parquet(parquet_path, compression="snappy", index=False)
-    np.savez_compressed(
+    to_parquet(df, parquet_path, compression="snappy", index=False)
+    savez(
         cfg.dir_training / "training_pixels.npz",
         X=X,
         class_id=class_id,
@@ -130,7 +131,7 @@ def build_training_store(cfg: Config, force: bool = False) -> None:
         "merged_raster": str(merged_path),
         "pc_rasters": {n: str(p) for n, p in zip(feats, cfg.pc_paths)},
     }
-    (cfg.dir_training / "training_meta.json").write_text(json.dumps(meta, indent=2))
+    write_text(cfg.dir_training / "training_meta.json", json.dumps(meta, indent=2))
 
     counts = (
         pd.Series(class_id).value_counts().rename_axis("class_id").reset_index(name="n_pixels")
@@ -139,7 +140,7 @@ def build_training_store(cfg: Config, force: bool = False) -> None:
     counts["n_pixels"] = counts["n_pixels"].fillna(0).astype(int)
     counts["area_ha"] = (counts["n_pixels"] * 0.01).round(2)
     counts["below_min"] = counts["n_pixels"] < cfg.analysis.min_pixels_per_class
-    counts.to_csv(cfg.dir_training / "class_counts.csv", index=False)
+    to_csv(counts, cfg.dir_training / "class_counts.csv", index=False)
 
     print(f"[extract] {X.shape[0]:,} habitat cells x {len(feats)} PCs -> {parquet_path}")
     n_small = int(counts["below_min"].sum())

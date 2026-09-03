@@ -16,6 +16,7 @@ from rasterio.windows import bounds as window_bounds, transform as window_transf
 
 from .config import Config
 from .grid import load_grid, iter_block_windows
+from .ioretry import to_csv
 from .lookup import load_lookup
 
 
@@ -130,12 +131,12 @@ def build_merged_raster(cfg: Config, force: bool = False) -> None:
             "ha_covered": round(burned[li] * cell_ha, 2),
             "ha_owned_after_merge": round(survived[li] * cell_ha, 2),
         })
-    pd.DataFrame(rows).to_csv(report_path, index=False)
+    to_csv(pd.DataFrame(rows), report_path, index=False)
 
     per_class = lut[["class_id", "naturkode", "navn", "hovednaturtype"]].copy()
     per_class["n_cells"] = per_class["class_id"].map(lambda c: int(class_counts[c]))
     per_class["area_ha"] = (per_class["n_cells"] * cell_ha).round(2)
-    per_class.to_csv(cfg.dir_merged / "class_cells.csv", index=False)
+    to_csv(per_class, cfg.dir_merged / "class_cells.csv", index=False)
 
     total = int(class_counts[1:].sum())
     print(f"[rasterize] wrote {out_path}")
