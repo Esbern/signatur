@@ -1,0 +1,22 @@
+name: signatur
+channels:
+  - conda-forge
+dependencies:
+  - python=3.12
+  - rasterio
+  - geopandas
+  - pyogrio
+  - libgdal-arrow-parquet
+  - shapely
+  - pyproj
+  - numpy
+  - pandas
+  - pyarrow
+  - scipy
+  - scikit-learn
+  - joblib
+  - matplotlib
+  - seaborn
+  - pyyaml
+  - tqdm
+  - pip

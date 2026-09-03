@@ -1,0 +1,46 @@
+naturkode,navn,hovednaturtype,prioriteret,note
+1210,Enaarig vegetation paa strandvolde,Kyst,0,Natura 2000 habitattype 1210
+1220,Fleraarig vegetation paa stenede strandvolde,Kyst,0,Natura 2000 habitattype 1220
+1230,Klinter og klipper ved kysten,Kyst,0,Natura 2000 habitattype 1230
+1310,Vegetation af kveller og andre enaarige strandplanter,Kyst,0,Natura 2000 habitattype 1310
+1320,Vadegraessamfund (Spartina),Kyst,0,Natura 2000 habitattype 1320
+1330,Strandenge,Kyst,0,Natura 2000 habitattype 1330
+1340,Indlandssalteng,Kyst,1,Natura 2000 habitattype 1340 (prioriteret)
+2110,Forklitter,Klit,0,Natura 2000 habitattype 2110
+2120,Hvide klitter og vandremiler,Klit,0,Natura 2000 habitattype 2120
+2130,Stabile kystklitter med urtevegetation (graa klit og groensvaerklit),Klit,1,Natura 2000 habitattype 2130 (prioriteret)
+2140,Kystklitter med dvaergbuskvegetation (klithede),Klit,1,Natura 2000 habitattype 2140 (prioriteret)
+2160,Kystklitter med havtorn,Klit,0,Natura 2000 habitattype 2160
+2170,Kystklitter med graaris,Klit,0,Natura 2000 habitattype 2170
+2180,Skovbevoksede kystklitter (skovklit),Klit,0,Natura 2000 habitattype 2180
+2190,Fugtige klitlavninger,Klit,0,Natura 2000 habitattype 2190
+2250,Kystklitter med enebaer,Klit,1,Natura 2000 habitattype 2250 (prioriteret)
+2310,Indlandsklitter med lyng og visse,Klit,0,Natura 2000 habitattype 2310
+2320,Indlandsklitter med lyng og revling,Klit,0,Natura 2000 habitattype 2320
+2330,Indlandsklitter med aabne graesarealer med sandskaeg og hvene,Klit,0,Natura 2000 habitattype 2330
+4010,Vaade dvaergbusksamfund med klokkelyng (vaad hede),Hede,0,Natura 2000 habitattype 4010
+4030,Toerre dvaergbusksamfund (toer hede),Hede,0,Natura 2000 habitattype 4030
+5130,Enebaerkrat paa heder overdrev eller skraenter,Hede,0,Natura 2000 habitattype 5130
+6120,Meget toer overdrevsvegetation paa kalkholdigt sand,Overdrev,1,Natura 2000 habitattype 6120 (prioriteret)
+6210,Overdrev og krat paa mere eller mindre kalkholdig bund,Overdrev,0,Natura 2000 habitattype 6210 (prioriteret ved vigtige orkidelokaliteter)
+6230,Artsrige overdrev eller graesheder paa mere eller mindre sur bund,Overdrev,1,Natura 2000 habitattype 6230 (prioriteret)
+6410,Tidvis vaade enge paa mager eller kalkrig bund ofte med blaatop,Overdrev,0,Natura 2000 habitattype 6410
+6430,Braemmer med hoeje urter langs vandloeb og skovbryn,Overdrev,0,Natura 2000 habitattype 6430
+7110,Aktive hoejmoser,Mose,1,Natura 2000 habitattype 7110 (prioriteret)
+7120,Nedbrudte hoejmoser med mulighed for naturlig gendannelse,Mose,0,Natura 2000 habitattype 7120
+7140,Overgangstyper af moser og haengesaek,Mose,0,Natura 2000 habitattype 7140
+7150,Plantesamfund med naebfroe soldug eller ulvefod paa vaadt sand eller blottet toerv,Mose,0,Natura 2000 habitattype 7150
+7210,Kalkrige moser og sumpe med hvas avneknippe,Mose,1,Natura 2000 habitattype 7210 (prioriteret)
+7220,Kilder og vaeld med kalkholdigt (haardt) vand,Mose,1,Natura 2000 habitattype 7220 (prioriteret)
+7230,Rigkaer,Mose,0,Natura 2000 habitattype 7230
+8220,Indlandsklipper af kalkfattige bjergarter,Klippe,0,Natura 2000 habitattype 8220
+9110,Boegeskove paa morbund uden kristtorn,Skov,0,Natura 2000 habitattype 9110
+9120,Boegeskove paa morbund med kristtorn,Skov,0,Natura 2000 habitattype 9120
+9130,Boegeskove paa muldbund,Skov,0,Natura 2000 habitattype 9130
+9150,Boegeskove paa kalkbund,Skov,0,Natura 2000 habitattype 9150
+9160,Egeskove og blandskove paa mere eller mindre rig jordbund,Skov,0,Natura 2000 habitattype 9160
+9170,Vinteregeskove,Skov,0,Natura 2000 habitattype 9170
+9180,Egekrat / aedelloevskov paa skraenter urer og i kloefter,Skov,1,"Natura 2000 habitattype 9180 (prioriteret); i laget bevaringsvaerdige egekrat markerer koden egekrat efter skovlovens paragraf 26"
+9190,Stilkegeskove og -krat paa mager sur bund,Skov,0,Natura 2000 habitattype 9190
+91D0,Skovbevokset toervemose,Skov,1,Natura 2000 habitattype 91D0 (prioriteret)
+91E0,Elle- og askeskove ved vandloeb soeer og vaeld,Skov,1,Natura 2000 habitattype 91E0 (prioriteret)

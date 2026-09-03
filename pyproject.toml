@@ -1,0 +1,32 @@
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "signatur"
+version = "0.1.0"
+description = "Geophysical niche analysis for identifying where new nature can be created in Denmark"
+requires-python = ">=3.11"
+dependencies = [
+    "rasterio",
+    "geopandas",
+    "pyogrio",
+    "shapely",
+    "pyproj",
+    "numpy",
+    "pandas",
+    "pyarrow",
+    "scipy",
+    "scikit-learn",
+    "joblib",
+    "matplotlib",
+    "seaborn",
+    "pyyaml",
+    "tqdm",
+]
+
+[project.scripts]
+signatur = "signatur.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]

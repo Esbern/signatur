@@ -1,0 +1,58 @@
+# ---------------------------------------------------------------------------
+# signatur - project configuration
+#
+# This is the ONLY file that should need editing when the project moves between
+# machines. All paths are absolute; relative paths (lookup_seed) are resolved
+# against the repository root.
+# ---------------------------------------------------------------------------
+
+crs: "EPSG:25832"          # ETRS89 / UTM zone 32N - the Danish 10 m grid
+
+paths:
+  pc_raster_dir: /mnt/d/GeoILUM/data/dk/04_principal_components
+  vector_dir:    /mnt/d/signatur
+  output_dir:    /mnt/d/signatur/output
+
+# Raster whose grid (transform, size) every output is aligned to.
+# Must live in pc_raster_dir and share the grid of every pc_raster.
+reference_raster: soil_PC1.tif
+
+nodata: -9999
+
+# Logical feature name -> filename in pc_raster_dir.
+# The ORDER here is the feature order used everywhere downstream.
+pc_rasters:
+  hydro_PC1: hydro_PC1.tif
+  hydro_PC2: hydro_PC2.tif
+  soil_PC1: soil_PC1.tif
+  soil_PC2: soil_PC2.tif
+  soil_PC3: soil_PC3.tif
+  toposphere_PC1: toposphere_PC1.tif
+  toposphere_PC2: toposphere_PC2.tif
+  toposphere_PC3: toposphere_PC3.tif
+
+# Habitat vector layers, ordered HIGH -> LOW priority.
+# Where polygons from different layers overlap a cell, the higher-priority
+# layer wins during rasterisation.
+habitat_layers:
+  - {name: bevaringsvrdige_egekrat, file: bevaringsvrdige_egekrat.parquet, priority: 1}
+  - {name: np3__lysbne_naturtyper,  file: np3__lysbne_naturtyper.parquet,  priority: 2}
+  - {name: np3__skovnaturtyper,     file: np3__skovnaturtyper.parquet,     priority: 3}
+
+naturkode_field: naturkode
+all_touched: false                 # rasterise only cells whose centre is inside a polygon
+
+lookup_seed: data/naturkode_lookup_seed.csv
+
+analysis:
+  min_pixels_per_class: 50         # classes below this are flagged and dropped from stats
+  plot_sample_per_class: 15000     # per-class cap for scatter / KDE / silhouette only
+  winsor_z: 5.0                    # robust clip (z-scores) for display + statistics
+  random_seed: 42
+
+processing:
+  block_size: 2048                 # windowed read/rasterise tile size (pixels)
+  test_bbox: null                  # [xmin, ymin, xmax, ymax] in CRS units for a fast subset run;
+                                   # null = process all of Denmark.
+                                   # Example (central Jylland, ~1.1 M cells, whole pipeline ~4 min):
+                                   #   test_bbox: [480000, 6200000, 560000, 6260000]
