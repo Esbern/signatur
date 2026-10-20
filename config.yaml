@@ -49,6 +49,7 @@ analysis:
   plot_sample_per_class: 15000     # per-class cap for scatter / KDE / silhouette only
   winsor_z: 5.0                    # robust clip (z-scores) for display + statistics
   random_seed: 42
+  holdout_frac: 0.2                # fraction of polygons per class held out for validation (stratified)
 
 fuzzy:
   min_cells_for_envelope: 150      # classes with fewer training cells get no envelope
@@ -56,6 +57,10 @@ fuzzy:
   per_class_rasters: true          # write one suitability raster per habitat type (~44 files)
   compression: DEFLATE             # GeoTIFF compression for the fuzzy rasters
   batch_px: 300000                 # valid-pixel sub-batch for the Mahalanobis evaluation
+
+richness:
+  threshold: 0.5                   # a habitat "counts" at a cell when its suitability >= this
+  open_hovednaturtyper: [Hede, Overdrev, Mose, Klit, Kyst, Klippe]  # non-forest set for the "_open" raster
 
 processing:
   block_size: 2048                 # windowed read/rasterise tile size (pixels)

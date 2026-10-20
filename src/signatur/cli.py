@@ -12,9 +12,10 @@ import time
 
 from .config import check_inputs, load_config
 
-EDA_STEPS = ["lookup", "rasterize", "extract", "plots", "stats"]
-FUZZY_STEPS = ["model", "project"]
-STEPS = EDA_STEPS + FUZZY_STEPS
+EDA_STEPS = ["lookup", "rasterize", "extract", "plots", "stats", "holdout"]
+FUZZY_STEPS = ["model", "project", "fuzzyplots", "richness", "residual", "residualprofile"]
+PREP_STEPS = ["climateprep"]
+STEPS = PREP_STEPS + EDA_STEPS + FUZZY_STEPS
 
 
 def _run_step(step: str, cfg, force: bool) -> None:
@@ -35,12 +36,33 @@ def _run_step(step: str, cfg, force: bool) -> None:
     elif step == "stats":
         from .stats import make_stats
         make_stats(cfg, force=force)
+    elif step == "holdout":
+        from .holdout import run_holdout
+        run_holdout(cfg, force=force)
     elif step == "model":
         from .model import build_envelopes
         build_envelopes(cfg, force=force)
     elif step == "project":
         from .project import project_fuzzy
         project_fuzzy(cfg, force=force)
+    elif step == "fuzzyplots":
+        from .fuzzy_plots import make_fuzzy_plots
+        make_fuzzy_plots(cfg, force=force)
+    elif step == "richness":
+        from .richness import build_richness
+        build_richness(cfg, force=force)
+    elif step == "residual":
+        from .residual import build_residual_category
+        build_residual_category(cfg, force=force)
+    elif step == "residualprofile":
+        from .residual import profile_residual
+        profile_residual(cfg, force=force)
+    elif step == "climateprep":
+        from .climate_prep import prepare_climate_pcs
+        if not cfg.climate.source:
+            raise ValueError("set climate.source in the config file (e.g. climate_pca.tif)")
+        prepare_climate_pcs(cfg, cfg.climate.source, list(cfg.climate.out_names) or None,
+                            cfg.climate.resampling, force=force)
     else:  # pragma: no cover
         raise ValueError(step)
     print(f"--- {step} done in {time.time() - t0:.1f}s")
@@ -56,13 +78,18 @@ def main(argv: list[str] | None = None) -> int:
     args = parser.parse_args(argv)
 
     cfg = load_config(args.config)
-    check_inputs(cfg)
+    steps = {"all": EDA_STEPS, "fuzzy": FUZZY_STEPS}.get(args.step, [args.step])
+
+    # climateprep *creates* some of the pc_rasters entries, so the usual
+    # existence check (which would fail on them) only applies once every
+    # remaining step needs those files to already exist.
+    if any(s not in PREP_STEPS for s in steps):
+        check_inputs(cfg)
     print(f"config     : {cfg.source_path}")
     print(f"output_dir : {cfg.output_dir}")
     if cfg.processing.test_bbox:
         print(f"TEST BBOX  : {cfg.processing.test_bbox}  (subset run)")
 
-    steps = {"all": EDA_STEPS, "fuzzy": FUZZY_STEPS}.get(args.step, [args.step])
     for step in steps:
         _run_step(step, cfg, args.force)
     return 0

@@ -28,6 +28,7 @@ class AnalysisCfg:
     plot_sample_per_class: int = 15000
     winsor_z: float = 5.0
     random_seed: int = 42
+    holdout_frac: float = 0.2       # fraction of POLYGONS per class held out for validation
 
 
 @dataclass(frozen=True)
@@ -46,6 +47,28 @@ class FuzzyCfg:
 
 
 @dataclass(frozen=True)
+class RichnessCfg:
+    threshold: float = 0.5
+    open_hovednaturtyper: tuple[str, ...] = ("Hede", "Overdrev", "Mose", "Klit", "Kyst", "Klippe")
+
+
+@dataclass(frozen=True)
+class ResidualCfg:
+    alpha_outside: float = 0.05     # chi2 confidence level: below this suitability, "outside the model"
+    alpha_strong: float = 0.01      # stricter tier
+    cluster_sample_cap: int = 300_000
+    k_min: int = 3
+    k_max: int = 10
+
+
+@dataclass(frozen=True)
+class ClimateCfg:
+    source: Optional[str] = None                 # filename in pc_raster_dir, e.g. climate_pca.tif
+    out_names: tuple[str, ...] = ()               # one per band; defaults to climate_PC1, PC2, ...
+    resampling: str = "bilinear"                  # rasterio.warp.Resampling name
+
+
+@dataclass(frozen=True)
 class Config:
     crs: str
     pc_raster_dir: Path
@@ -61,6 +84,9 @@ class Config:
     analysis: AnalysisCfg
     processing: ProcessingCfg
     fuzzy: FuzzyCfg
+    richness: RichnessCfg
+    residual: ResidualCfg = field(default_factory=ResidualCfg)
+    climate: ClimateCfg = field(default_factory=ClimateCfg)
     source_path: Path = field(default=REPO_ROOT / "config.yaml")
 
     # -- derived helpers ---------------------------------------------------
@@ -124,6 +150,18 @@ class Config:
     def dir_fuzzy(self) -> Path:
         return self.out("06_fuzzy")
 
+    @property
+    def dir_potential(self) -> Path:
+        return self.out("07_potential")
+
+    @property
+    def dir_holdout(self) -> Path:
+        return self.out("08_holdout")
+
+    @property
+    def dir_residual(self) -> Path:
+        return self.out("09_residual")
+
 
 def _resolve(base: Path, value: str | Path) -> Path:
     p = Path(value).expanduser()
@@ -141,6 +179,13 @@ def load_config(path: str | Path | None = None) -> Config:
     analysis = raw.get("analysis", {})
     processing = raw.get("processing", {})
     fuzzy = raw.get("fuzzy", {})
+    richness = raw.get("richness", {})
+    if "open_hovednaturtyper" in richness:
+        richness = dict(richness, open_hovednaturtyper=tuple(richness["open_hovednaturtyper"]))
+    residual = raw.get("residual", {})
+    climate = raw.get("climate", {})
+    if "out_names" in climate:
+        climate = dict(climate, out_names=tuple(climate["out_names"]))
 
     test_bbox = processing.get("test_bbox")
     if test_bbox is not None:
@@ -163,6 +208,9 @@ def load_config(path: str | Path | None = None) -> Config:
         analysis=AnalysisCfg(**analysis),
         processing=ProcessingCfg(block_size=int(processing.get("block_size", 2048)), test_bbox=test_bbox),
         fuzzy=FuzzyCfg(**fuzzy),
+        richness=RichnessCfg(**richness),
+        residual=ResidualCfg(**residual),
+        climate=ClimateCfg(**climate),
         source_path=cfg_path,
     )
     return cfg

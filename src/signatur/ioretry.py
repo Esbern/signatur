@@ -65,3 +65,15 @@ def savez(path, **arrays) -> None:
     import numpy as np
 
     np.savez_compressed(path, **arrays)
+
+
+@retry_io
+def read_band(src, *args, **kwargs):
+    """Retrying wrapper around ``rasterio`` dataset reads.
+
+    The source rasters live on a DrvFs mount (an external drive, remounted
+    manually at least once this project) that has shown transient
+    ``TIFFReadEncodedStrip`` read failures under load, alongside the write-side
+    EINVAL errors ``save_fig``/``to_csv``/etc. already retry around.
+    """
+    return src.read(*args, **kwargs)

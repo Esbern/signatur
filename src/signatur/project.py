@@ -20,6 +20,7 @@ import numpy as np
 import rasterio
 
 from .config import Config
+from .ioretry import read_band
 from .grid import check_same_grid, iter_block_windows, load_grid
 from .lookup import load_lookup
 
@@ -103,7 +104,7 @@ def project_fuzzy(cfg: Config, force: bool = False) -> None:
 
             # Read one band first; most of the grid bbox is sea/abroad (nodata),
             # so skip the other 7 reads entirely where there is no land.
-            b0 = pc_srcs[0].read(1, window=win)
+            b0 = read_band(pc_srcs[0], 1, window=win)
             valid = np.isfinite(b0)
             if nd is not None:
                 valid &= b0 != nd
@@ -120,7 +121,7 @@ def project_fuzzy(cfg: Config, force: bool = False) -> None:
                 Xr = np.empty((nv, F), dtype=np.float32)
                 Xr[:, 0] = b0.ravel()[flat_valid]
                 for i in range(1, F):
-                    band = pc_srcs[i].read(1, window=win).ravel()[flat_valid]
+                    band = read_band(pc_srcs[i], 1, window=win).ravel()[flat_valid]
                     ok = np.isfinite(band) & (band != nd if nd is not None else True)
                     band[~ok] = np.nan
                     Xr[:, i] = band

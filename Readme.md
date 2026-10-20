@@ -40,6 +40,14 @@ occupied cell, **~0** far outside. Run with `python -m signatur fuzzy`
 (= `model` then `project`); `project` is the long step (streams the 8 rasters
 over the whole grid).
 
+| step | module | output |
+|------|--------|--------|
+| `fuzzyplots` | `fuzzy_plots.py` | `06_fuzzy/best_by_habitat.{png,csv}` — projected suitability sampled inside each habitat's training polygons (calibration check) |
+| `richness` | `richness.py` | `07_potential/habitat_richness.tif` (count of habitats with suitability ≥ threshold), `habitat_richness_open.tif` (non-forest only), `habitat_richness_sum.tif` (Σ suitability) — type-agnostic "how much nature could this ground support", for delineating restoration / park areas |
+
+`fuzzyplots` and `richness` only re-read the `06_fuzzy` rasters, so they are
+fast to re-run with new thresholds (`richness.threshold` in `config.yaml`).
+
 ## Setup
 
 ```bash

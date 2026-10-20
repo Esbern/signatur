@@ -32,19 +32,33 @@ def _fit_covariance(Xz: np.ndarray, method: str):
     return est.location_, est.precision_
 
 
-def build_envelopes(cfg: Config, force: bool = False) -> None:
-    npz_path = cfg.dir_model / "envelopes.npz"
+def build_envelopes(cfg: Config, force: bool = False, subset: str = "all") -> None:
+    """Fit the Gaussian envelopes.
+
+    subset="all" (default): every habitat cell, regardless of train/test split -
+        this is the PRODUCTION model used by `project`.
+    subset="train": only ``split == 0`` cells (80% of polygons) - used by
+        `holdout` to evaluate purely on the other 20%, never touches the
+        production envelopes.npz.
+    """
+    tag = "" if subset == "all" else f"_{subset}"
+    npz_path = cfg.dir_model / f"envelopes{tag}.npz"
     if npz_path.exists() and not force:
         print(f"[model] exists, skipping: {npz_path}")
         return
 
     df = load_training(cfg)
+    if subset == "train":
+        if "split" not in df.columns:
+            raise RuntimeError("training_pixels.parquet has no 'split' column - "
+                               "re-run `signatur rasterize` and `signatur extract`")
+        df = df[df["split"] == 0]
     lut = load_lookup(cfg)
     feats = cfg.feature_names
     df_ok = df[np.isfinite(df[feats].to_numpy()).all(axis=1)]
 
     scaler = Scaler.fit(df_ok, feats, cfg.analysis.winsor_z)
-    scaler.to_json(cfg.dir_model / "scaler.json")
+    scaler.to_json(cfg.dir_model / f"scaler{tag}.json")
 
     Z_all = scaler.transform(df_ok[feats].to_numpy(dtype=np.float64))
     class_ids = df_ok["class_id"].to_numpy()
@@ -86,12 +100,13 @@ def build_envelopes(cfg: Config, force: bool = False) -> None:
         df=df_n,
     )
     report = pd.DataFrame(rows).sort_values("class_id")
-    to_csv(report, cfg.dir_model / "model_report.csv", index=False)
+    to_csv(report, cfg.dir_model / f"model_report{tag}.csv", index=False)
 
     n_env = int(report["envelope"].sum())
     poor = report.loc[(report["envelope"] == 1) & (report["frac_within_chi2_95"] < 0.8),
                       "naturkode"].tolist()
-    print(f"[model] {n_env} envelopes fitted ({len(report) - n_env} classes skipped, too few cells)")
+    print(f"[model] subset={subset}: {n_env} envelopes fitted "
+          f"({len(report) - n_env} classes skipped, too few cells)")
     if poor:
         print(f"[model] non-Gaussian niches (chi2-95 coverage < 0.8, treat suitability with care): {poor}")
     print(f"[model] -> {npz_path}")

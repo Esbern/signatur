@@ -1,0 +1,91 @@
+# ---------------------------------------------------------------------------
+# signatur - climate-inclusive variant of config.yaml
+#
+# Same inputs as config.yaml plus the 3 climate PCs, written to a SEPARATE
+# output_dir so this comparison run never touches the baseline results in
+# output/. Everything else (habitat layers, priorities, analysis settings) is
+# identical, so 04_stats/summary.md in each output tree is a direct comparison.
+#
+# Workflow:
+#   1. python -m signatur climateprep --config config_climate.yaml
+#      (splits+resamples climate_pca.tif -> climate_PC1/2/3.tif in pc_raster_dir,
+#      shared with config.yaml since they're just more files there)
+#   2. python -m signatur all --config config_climate.yaml
+#   3. compare output/04_stats/summary.md vs output_climate/04_stats/summary.md
+# ---------------------------------------------------------------------------
+
+crs: "EPSG:25832"
+
+paths:
+  pc_raster_dir: /mnt/d/GeoILUM/data/dk/04_principal_components
+  vector_dir:    /mnt/d/signatur
+  output_dir:    /mnt/d/signatur/output_climate
+
+reference_raster: soil_PC1.tif
+nodata: -9999
+
+pc_rasters:
+  hydro_PC1: hydro_PC1.tif
+  hydro_PC2: hydro_PC2.tif
+  soil_PC1: soil_PC1.tif
+  soil_PC2: soil_PC2.tif
+  soil_PC3: soil_PC3.tif
+  toposphere_PC1: toposphere_PC1.tif
+  toposphere_PC2: toposphere_PC2.tif
+  toposphere_PC3: toposphere_PC3.tif
+  climate_PC1: climate_PC1.tif
+  climate_PC2: climate_PC2.tif
+  climate_PC3: climate_PC3.tif
+
+habitat_layers:
+  - {name: bevaringsvrdige_egekrat, file: bevaringsvrdige_egekrat.parquet, priority: 1}
+  - {name: np3__lysbne_naturtyper,  file: np3__lysbne_naturtyper.parquet,  priority: 2}
+  - {name: np3__skovnaturtyper,     file: np3__skovnaturtyper.parquet,     priority: 3}
+
+naturkode_field: naturkode
+all_touched: false
+
+lookup_seed: data/naturkode_lookup_seed.csv
+
+analysis:
+  min_pixels_per_class: 50
+  plot_sample_per_class: 15000
+  winsor_z: 5.0
+  random_seed: 42
+  holdout_frac: 0.2                # fraction of polygons per class held out for validation (stratified)
+
+fuzzy:
+  min_cells_for_envelope: 150
+  covariance: ledoit_wolf
+  per_class_rasters: true
+  compression: DEFLATE
+  batch_px: 300000
+
+richness:
+  threshold: 0.5
+  open_hovednaturtyper: [Hede, Overdrev, Mose, Klit, Kyst, Klippe]
+
+# "outside the model" / residual analysis (ministry points 7-9): categorises
+# best_suitability.tif by chi-square confidence level, then clusters + profiles
+# the cells that fall outside every habitat envelope.
+residual:
+  alpha_outside: 0.05        # below this suitability: outside every envelope's 95% CI
+  alpha_strong: 0.01         # stricter tier: outside every envelope's 99% CI
+  cluster_sample_cap: 300000 # cells sampled (Bernoulli, exact count known first) for clustering
+  k_min: 3
+  k_max: 10
+
+# climate_pca.tif is 1000 m, 3 bands, same CRS but not pixel-aligned with the
+# 10 m grid. climateprep resamples each band onto reference_raster's exact grid
+# (bilinear - the surface is smooth, this avoids fabricating 1 km block edges)
+# and writes climate_PC1/2/3.tif into pc_raster_dir.
+climate:
+  source: climate_pca.tif
+  out_names: [climate_PC1, climate_PC2, climate_PC3]
+  resampling: bilinear
+
+processing:
+  block_size: 2048
+  test_bbox: null
+  # Example fast subset (central Jylland, ~1.1 M cells):
+  #   test_bbox: [480000, 6200000, 560000, 6260000]
