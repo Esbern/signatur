@@ -13,7 +13,8 @@ import time
 from .config import check_inputs, load_config
 
 EDA_STEPS = ["lookup", "rasterize", "extract", "plots", "stats", "holdout"]
-FUZZY_STEPS = ["model", "project", "fuzzyplots", "richness", "residual", "residualprofile"]
+FUZZY_STEPS = ["model", "project", "fuzzyplots", "richness", "residual", "residualprofile",
+               "setcalib", "sets", "groupcalib", "groups"]
 PREP_STEPS = ["climateprep"]
 STEPS = PREP_STEPS + EDA_STEPS + FUZZY_STEPS
 
@@ -57,6 +58,18 @@ def _run_step(step: str, cfg, force: bool) -> None:
     elif step == "residualprofile":
         from .residual import profile_residual
         profile_residual(cfg, force=force)
+    elif step == "setcalib":
+        from .sets import calibrate_sets
+        calibrate_sets(cfg, force=force)
+    elif step == "sets":
+        from .sets import build_sets
+        build_sets(cfg, force=force)
+    elif step == "groupcalib":
+        from .groups import calibrate_groups
+        calibrate_groups(cfg, force=force)
+    elif step == "groups":
+        from .groups import build_groups
+        build_groups(cfg, force=force)
     elif step == "climateprep":
         from .climate_prep import prepare_climate_pcs
         if not cfg.climate.source:

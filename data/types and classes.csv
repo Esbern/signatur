@@ -1,0 +1,45 @@
+﻿Klasse nr,Klasse navn,Habitat naturtype nr,Habitat naturtype nr og navn
+1,Strande og strandenge,1210,1210 – Strandvold med enårige planter
+1,Strande og strandenge,1220,1220 – Strandvold med flerårige planter
+1,Strande og strandenge,1230,1230 – Kystklint- eller klippe
+1,Strande og strandenge,1310,1310 – Enårig strandengsvegetation
+1,Strande og strandenge,1320,1320 – Vadegræssamfund
+1,Strande og strandenge,1330,1330 – Strandeng
+1,Strande og strandenge,1340,1340 – Indlandssalteng
+2,Kystklitter,2110,2110 – Forklit
+2,Kystklitter,2120,2120 – Hvid klit
+2,Kystklitter,2130,2130 – Grå/grøn klit
+2,Kystklitter,2140,2140 – Klithede
+2,Kystklitter,2160,2160 – Havtornklit
+2,Kystklitter,2170,2170 – Grårisklit
+2,Kystklitter,2190,2190 – Klitlavning
+2,Kystklitter,2250,2250 – Enebærklit
+3,Indlandsklitter,2310,2310 – Visse-indlandsklit
+3,Indlandsklitter,2320,2320 – Revling-indlandsklit
+3,Indlandsklitter,2330,2330 – Græs-indlandsklit
+4,Heder og krat,4010,4010 – Våd hede
+4,Heder og krat,4030,4030 – Tør hede
+4,Heder og krat,5130,5130 – Enebærkrat
+5,"Overdrev, eng og klipper",6120,6120 – Tørt kalksandsoverdrev
+5,"Overdrev, eng og klipper",6210,6210 – Kalkoverdrev
+5,"Overdrev, eng og klipper",6230,6230 – Surt overdrev
+5,"Overdrev, eng og klipper",6410,6410 – Tidvis våd eng
+5,"Overdrev, eng og klipper",8220,8220 – Indlandsklippe
+6,Moser,7110,7110 – Aktiv højmose
+6,Moser,7120,7120 – Nedbrudt højmose
+6,Moser,7140,7140 – Hængesæk
+6,Moser,7150,7150 – Tørvelavning
+6,Moser,7210,7210 – Avneknippemose
+6,Moser,7220,7220 – Kildevæld
+6,Moser,7230,7230 – Rigkær
+7,Skove,2180,2180 – Skovklit
+7,Skove,9110,9110 – Bøg på mor
+7,Skove,9120,9120 – Bøg på mor med kristtorn
+7,Skove,9130,9130 – Bøg på muld
+7,Skove,9150,9150 – Bøg på kalk
+7,Skove,9160,9160 – Ege-blandskov
+7,Skove,9170,9170 – Vinteregeskov
+7,Skove,9180,9180 – Egekrat (bevaringsværdig egekrat - OBS tilføjet manuelt)
+7,Skove,9190,9190 – Stilkegekrat
+7,Skove,91D0,91D0 – Skovbevokset tørvemose
+7,Skove,91E0,91E0 – Elle- og askeskov

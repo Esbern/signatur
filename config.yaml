@@ -62,6 +62,27 @@ richness:
   threshold: 0.5                   # a habitat "counts" at a cell when its suitability >= this
   open_hovednaturtyper: [Hede, Overdrev, Mose, Klit, Kyst, Klippe]  # non-forest set for the "_open" raster
 
+
+# plausible-class sets (conformal prediction): instead of one best class, every
+# class the geophysics cannot rule out. Cutoffs are calibrated on the held-out
+# polygons (`setcalib`, needs the holdout split), then mapped by `sets`.
+sets:
+  coverage: 0.9              # true class in the set for 90% of new sites, per class
+  lr_ratio: 8                # comparison rule: keep k if L_k / L_best >= 1/8
+  min_test_polygons: 10      # fewer held-out polygons -> pooled cutoff for that class
+  member_envelope: true      # a habitat (and, in groups, a group) needs the cell inside its own envelope
+  envelope_coverage: 0.98    # "inside" = within the radius holding 98% of the habitat's HELD-OUT sites
+                             # (calibrated; the Gaussian 99% radius left out 9.5% of real new sites;
+                             #  at 99% single outlier polygons set the radius, e.g. 6210 -> 15,915x)
+
+# two-level sets: plausible habitat GROUPS (Klasse nr in groups.file), then the
+# plausible habitats within each of them. At most 127 group combinations.
+groups:
+  file: "data/types and classes.csv"
+  coverage: 0.8              # true group in the group set for 80% of new sites, per group
+  habitat_coverage: 0.9      # true habitat in the within-group set for 90% of sites
+  style_top_n: 20            # QGIS style: the 20 largest combinations get their own colour, the rest grey
+
 processing:
   block_size: 2048                 # windowed read/rasterise tile size (pixels)
   test_bbox: null                  # null = all of Denmark; example box in the comment below

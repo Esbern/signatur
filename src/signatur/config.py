@@ -62,6 +62,23 @@ class ResidualCfg:
 
 
 @dataclass(frozen=True)
+class SetsCfg:
+    coverage: float = 0.9           # conformal target: true class in the set for this share of new sites
+    lr_ratio: float = 8.0           # likelihood-ratio rule for comparison: keep k if L_k / L_best >= 1/lr_ratio
+    min_test_polygons: int = 10     # fewer held-out polygons than this -> class uses the pooled cutoff
+    member_envelope: bool = True    # a class only enters a set where the cell is inside its own envelope
+    envelope_coverage: float = 0.98 # calibrated envelope radius: contains this share of held-out sites
+
+
+@dataclass(frozen=True)
+class GroupsCfg:
+    file: Path = REPO_ROOT / "data" / "types and classes.csv"   # Klasse nr / Habitat naturtype nr
+    coverage: float = 0.8           # conformal target for the group set
+    habitat_coverage: float = 0.9   # conformal target for habitats within a plausible group
+    style_top_n: int = 20           # group_set_mask.qml: combinations with their own colour
+
+
+@dataclass(frozen=True)
 class ClimateCfg:
     source: Optional[str] = None                 # filename in pc_raster_dir, e.g. climate_pca.tif
     out_names: tuple[str, ...] = ()               # one per band; defaults to climate_PC1, PC2, ...
@@ -86,6 +103,8 @@ class Config:
     fuzzy: FuzzyCfg
     richness: RichnessCfg
     residual: ResidualCfg = field(default_factory=ResidualCfg)
+    sets: SetsCfg = field(default_factory=SetsCfg)
+    groups: GroupsCfg = field(default_factory=GroupsCfg)
     climate: ClimateCfg = field(default_factory=ClimateCfg)
     source_path: Path = field(default=REPO_ROOT / "config.yaml")
 
@@ -162,6 +181,14 @@ class Config:
     def dir_residual(self) -> Path:
         return self.out("09_residual")
 
+    @property
+    def dir_sets(self) -> Path:
+        return self.out("10_sets")
+
+    @property
+    def dir_groups(self) -> Path:
+        return self.out("11_groups")
+
 
 def _resolve(base: Path, value: str | Path) -> Path:
     p = Path(value).expanduser()
@@ -183,6 +210,10 @@ def load_config(path: str | Path | None = None) -> Config:
     if "open_hovednaturtyper" in richness:
         richness = dict(richness, open_hovednaturtyper=tuple(richness["open_hovednaturtyper"]))
     residual = raw.get("residual", {})
+    sets = raw.get("sets", {})
+    groups = raw.get("groups", {})
+    if "file" in groups:
+        groups = dict(groups, file=_resolve(REPO_ROOT, groups["file"]))
     climate = raw.get("climate", {})
     if "out_names" in climate:
         climate = dict(climate, out_names=tuple(climate["out_names"]))
@@ -210,6 +241,8 @@ def load_config(path: str | Path | None = None) -> Config:
         fuzzy=FuzzyCfg(**fuzzy),
         richness=RichnessCfg(**richness),
         residual=ResidualCfg(**residual),
+        sets=SetsCfg(**sets),
+        groups=GroupsCfg(**groups),
         climate=ClimateCfg(**climate),
         source_path=cfg_path,
     )

@@ -48,6 +48,17 @@ over the whole grid).
 `fuzzyplots` and `richness` only re-read the `06_fuzzy` rasters, so they are
 fast to re-run with new thresholds (`richness.threshold` in `config.yaml`).
 
+| step | module | output |
+|------|--------|--------|
+| `setcalib` | `sets.py` | `08_holdout/set_calibration.csv`, `set_coverage.csv`, `set_report.md` — per-habitat posterior cutoffs calibrated on the held-out polygons (conformal prediction, `sets.coverage`) |
+| `sets` | `sets.py` | `10_sets/set_size.tif`, `set_mask.tif` (uint64 bitmask, see `set_bits.csv`), `best_posterior.tif`, `map_class.tif` — every habitat the geophysics cannot rule out, instead of one winner |
+| `groupcalib` | `groups.py` | `08_holdout/group_calibration.csv`, `group_coverage.csv`, `group_report.md` — same calibration over the 7 habitat groups in `data/types and classes.csv` (`groups.coverage`), plus habitats within each group |
+| `groups` | `groups.py` | `11_groups/group_set_mask.tif` (≤127 group combinations, see `group_combinations.csv`), `best_group.tif`, `habitat_set_mask.tif` — plausible groups, then plausible habitats inside them |
+
+See [docs/plausible_class_sets.md](docs/plausible_class_sets.md) for the method
+and how to read the results. `setcalib` needs the holdout split and takes
+seconds; `sets` streams the PC rasters again (~70 min for all of Denmark).
+
 ## Setup
 
 ```bash
