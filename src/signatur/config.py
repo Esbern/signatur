@@ -79,6 +79,14 @@ class GroupsCfg:
 
 
 @dataclass(frozen=True)
+class NicheCfg:
+    stride: int = 20                # sample every N grid cells (20 -> 200 m, ~1 M land points)
+    threshold: float = 0.55         # suitability above which a cell counts as the habitat's niche
+    min_points: int = 100           # fewer 10 m cells (1 ha = 100) above the threshold -> no figure
+    parameters: tuple = ()          # dicts: name, file (absolute), band, label, unit, sphere
+
+
+@dataclass(frozen=True)
 class ClimateCfg:
     source: Optional[str] = None                 # filename in pc_raster_dir, e.g. climate_pca.tif
     out_names: tuple[str, ...] = ()               # one per band; defaults to climate_PC1, PC2, ...
@@ -105,6 +113,7 @@ class Config:
     residual: ResidualCfg = field(default_factory=ResidualCfg)
     sets: SetsCfg = field(default_factory=SetsCfg)
     groups: GroupsCfg = field(default_factory=GroupsCfg)
+    niche: NicheCfg = field(default_factory=NicheCfg)
     climate: ClimateCfg = field(default_factory=ClimateCfg)
     source_path: Path = field(default=REPO_ROOT / "config.yaml")
 
@@ -189,6 +198,10 @@ class Config:
     def dir_groups(self) -> Path:
         return self.out("11_groups")
 
+    @property
+    def dir_niche(self) -> Path:
+        return self.out("13_niche")
+
 
 def _resolve(base: Path, value: str | Path) -> Path:
     p = Path(value).expanduser()
@@ -212,6 +225,9 @@ def load_config(path: str | Path | None = None) -> Config:
     residual = raw.get("residual", {})
     sets = raw.get("sets", {})
     groups = raw.get("groups", {})
+    niche = raw.get("niche", {})
+    if "parameters" in niche:
+        niche = dict(niche, parameters=tuple(dict(p) for p in niche["parameters"]))
     if "file" in groups:
         groups = dict(groups, file=_resolve(REPO_ROOT, groups["file"]))
     climate = raw.get("climate", {})
@@ -243,6 +259,7 @@ def load_config(path: str | Path | None = None) -> Config:
         residual=ResidualCfg(**residual),
         sets=SetsCfg(**sets),
         groups=GroupsCfg(**groups),
+        niche=NicheCfg(**niche),
         climate=ClimateCfg(**climate),
         source_path=cfg_path,
     )

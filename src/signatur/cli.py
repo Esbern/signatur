@@ -14,12 +14,12 @@ from .config import check_inputs, load_config
 
 EDA_STEPS = ["lookup", "rasterize", "extract", "plots", "stats", "holdout"]
 FUZZY_STEPS = ["model", "project", "fuzzyplots", "richness", "residual", "residualprofile",
-               "setcalib", "sets", "groupcalib", "groups"]
+               "setcalib", "sets", "groupcalib", "groups", "nichesample", "nichehist", "nicheplots"]
 PREP_STEPS = ["climateprep"]
 STEPS = PREP_STEPS + EDA_STEPS + FUZZY_STEPS
 
 
-def _run_step(step: str, cfg, force: bool) -> None:
+def _run_step(step: str, cfg, force: bool, args_only: list[str] | None = None) -> None:
     t0 = time.time()
     print(f"\n=== {step} ===")
     if step == "lookup":
@@ -70,6 +70,15 @@ def _run_step(step: str, cfg, force: bool) -> None:
     elif step == "groups":
         from .groups import build_groups
         build_groups(cfg, force=force)
+    elif step == "nichesample":
+        from .niche import build_niche_sample
+        build_niche_sample(cfg, force=force)
+    elif step == "nichehist":
+        from .niche import build_niche_hist
+        build_niche_hist(cfg, force=force)
+    elif step == "nicheplots":
+        from .niche import make_niche_plots
+        make_niche_plots(cfg, force=force, only=args_only)
     elif step == "climateprep":
         from .climate_prep import prepare_climate_pcs
         if not cfg.climate.source:
@@ -88,6 +97,8 @@ def main(argv: list[str] | None = None) -> int:
                         help="a single step, 'all' (the 5 EDA steps), or 'fuzzy' (model + project)")
     parser.add_argument("--config", default=None, help="path to config.yaml (default: repo root)")
     parser.add_argument("--force", action="store_true", help="rebuild even if outputs exist")
+    parser.add_argument("--only", default=None,
+                        help="nicheplots: comma-separated habitat codes to draw (e.g. 6210,7110)")
     args = parser.parse_args(argv)
 
     cfg = load_config(args.config)
@@ -104,7 +115,8 @@ def main(argv: list[str] | None = None) -> int:
         print(f"TEST BBOX  : {cfg.processing.test_bbox}  (subset run)")
 
     for step in steps:
-        _run_step(step, cfg, args.force)
+        _run_step(step, cfg, args.force,
+                  [c.strip() for c in args.only.split(",")] if args.only else None)
     return 0
 
 

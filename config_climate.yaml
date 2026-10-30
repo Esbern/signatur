@@ -110,3 +110,31 @@ processing:
   test_bbox: null
   # Example fast subset (central Jylland, ~1.1 M cells):
   #   test_bbox: [480000, 6200000, 560000, 6260000]
+
+# niche plots (`nichesample`, `nicheplots`): the raw parameters behind the PCs,
+# shown per habitat as national percentiles over cells with suitability > threshold.
+# Grouping follows D:/GeoILUM/scripts/spheres.JSON; climate uses the annual bands.
+niche:
+  stride: 20
+  threshold: 0.55
+  min_points: 100            # 10 m cells (100 = 1 ha) above the threshold needed for a figure
+  parameters:
+    - {name: clay,      sphere: Jordbund,   label: "Ler 0–30 cm",              unit: "%",  file: /mnt/d/GeoILUM/data/dk/Preprossed/0_30_Clay_mean.tif}
+    - {name: silt,      sphere: Jordbund,   label: "Silt 0–30 cm",             unit: "%",  file: /mnt/d/GeoILUM/data/dk/Preprossed/0_30_Silt_mean.tif}
+    - {name: fine_sand, sphere: Jordbund,   label: "Finsand 0–30 cm",          unit: "%",  file: /mnt/d/GeoILUM/data/dk/Preprossed/0_30_Fine_sand_mean.tif}
+    - {name: coarse_sand, sphere: Jordbund, label: "Grovsand 0–30 cm",         unit: "%",  file: /mnt/d/GeoILUM/data/dk/Preprossed/0_30_Coarse_sand_mean.tif}
+    - {name: caco3,     sphere: Jordbund,   label: "Kalk (CaCO₃) 0–30 cm",     unit: "%",  file: /mnt/d/GeoILUM/data/dk/Preprossed/0_30_CaCO3_mean.tif}
+    - {name: soc,       sphere: Jordbund,   label: "Organisk kulstof 0–30 cm", unit: "%",  file: /mnt/d/GeoILUM/data/dk/Preprossed/0_30_Kulstof_kombineret.tif}
+    - {name: gw_summer, sphere: Hydrosfære, label: "Grundvandsdybde, sommer",  unit: "cm", file: /mnt/d/GeoILUM/data/dk/Preprossed/Summer_predict.tif}
+    - {name: gw_winter, sphere: Hydrosfære, label: "Grundvandsdybde, vinter",  unit: "cm", file: /mnt/d/GeoILUM/data/dk/Preprossed/Winter_predict.tif}
+    - {name: slope,     sphere: Toposfære,  label: "Hældning",                 unit: "°",  file: /mnt/d/GeoILUM/data/dk/Preprossed/slope_10.tif}
+    - {name: irradiance, sphere: Toposfære, label: "Solindstråling (dag 5–175)", unit: "Wh/m²", file: /mnt/d/GeoILUM/data/dk/Preprossed/global_day_5_175.tif}
+    - {name: tci,       sphere: Toposfære,  label: "Topografisk indeks",       unit: "",   file: /mnt/d/GeoILUM/data/dk/Preprossed/togographical_index.tif}
+    - {name: tpi,       sphere: Toposfære,  label: "Topografisk position (TPI)", unit: "", file: /mnt/d/GeoILUM/data/dk/Preprossed/TPI_10.tif}
+    - {name: precip,    sphere: Klima, label: "Nedbør, år",                  unit: "mm/døgn", file: /mnt/d/klimanormal/climate_inputs_1km.tif, band: 1}
+    - {name: temp,      sphere: Klima, label: "Middeltemperatur, år",        unit: "°C",      file: /mnt/d/klimanormal/climate_inputs_1km.tif, band: 6}
+    - {name: dtr,       sphere: Klima, label: "Døgnets temperaturinterval",  unit: "°C",      file: /mnt/d/klimanormal/climate_inputs_1km.tif, band: 11}
+    - {name: pet,       sphere: Klima, label: "Potentiel fordampning, år",   unit: "mm/døgn", file: /mnt/d/klimanormal/climate_inputs_1km.tif, band: 16}
+    - {name: solar,     sphere: Klima, label: "Solindstråling, år",          unit: "W/m²",    file: /mnt/d/klimanormal/climate_inputs_1km.tif, band: 21}
+    - {name: wind,      sphere: Klima, label: "Middelvind, år",              unit: "m/s",     file: /mnt/d/klimanormal/climate_inputs_1km.tif, band: 26}
+    - {name: annual_range, sphere: Klima, label: "Årets temperaturinterval", unit: "°C",      file: /mnt/d/klimanormal/climate_inputs_1km.tif, band: 31}

@@ -1,0 +1,21 @@
+﻿file,title,legend
+04_principal_components/hydro_PC1.tif,"Hydrosfære, hovedkomponent 1",PC-score
+04_principal_components/hydro_PC2.tif,"Hydrosfære, hovedkomponent 2",PC-score
+Preprossed/Summer_predict.tif,"Dybde til terrænnært grundvand, sommer",cm under terræn
+Preprossed/Winter_predict.tif,"Dybde til terrænnært grundvand, vinter",cm under terræn
+04_principal_components/soil_PC1.tif,"Jordbund, hovedkomponent 1",PC-score
+04_principal_components/soil_PC2.tif,"Jordbund, hovedkomponent 2",PC-score
+04_principal_components/soil_PC3.tif,"Jordbund, hovedkomponent 3",PC-score
+Preprossed/0_30_Clay_mean.tif,"Lerindhold, 0–30 cm",%
+Preprossed/0_30_Silt_mean.tif,"Siltindhold, 0–30 cm",%
+Preprossed/0_30_Fine_sand_mean.tif,"Finsandsindhold, 0–30 cm",%
+Preprossed/0_30_Coarse_sand_mean.tif,"Grovsandsindhold, 0–30 cm",%
+Preprossed/0_30_CaCO3_mean.tif,"Kalkindhold (CaCO₃), 0–30 cm",%
+Preprossed/0_30_Kulstof_kombineret.tif,"Organisk kulstof, 0–30 cm",%
+04_principal_components/toposphere_PC1.tif,"Toposfære, hovedkomponent 1",PC-score
+04_principal_components/toposphere_PC2.tif,"Toposfære, hovedkomponent 2",PC-score
+04_principal_components/toposphere_PC3.tif,"Toposfære, hovedkomponent 3",PC-score
+Preprossed/slope_10.tif,Terrænhældning,°
+Preprossed/global_day_5_175.tif,Solindstråling (dag 5–175),Wh/m²
+Preprossed/togographical_index.tif,Topografisk indeks (TCI),Indeks
+Preprossed/TPI_10.tif,Topografisk positionsindeks (TPI),Indeks
